@@ -75,7 +75,7 @@ Code ([ipynb](code/2_FloatingPointPrecision/2_FloatingPointPrecision.ipynb))]
         - Clenshaw-Curtis quadrature
         - Gaussian quadrature
 
-7. Numerical differentiation [Lecture ([pdf](slides/Lecture10-NumericalDifferentiation.pdf)), Code ([ipynb](code/7_NumericalDerivatives/7_NumericalDerivatives.ipynb))]
+7. Numerical differentiation [Lecture ([pdf](slides/Lecture10-NumericalDerivatives.pdf)), Code ([ipynb](code/7_NumericalDerivatives/7_NumericalDerivatives.ipynb))]
     - Forward, backward, and central difference
     - High-order approximations and derivatives
     - Balancing truncation and round-off errors
@@ -139,11 +139,10 @@ Code ([ipynb](code/2_FloatingPointPrecision/2_FloatingPointPrecision.ipynb))]
         - Simulated annealing
         - Percolation threshold simulation
 
-14. Quantum mechanics
+14. Quantum mechanics [Lecture ([pdf](slides/Lecture21-QuantumMechanics.pdf), [pptx](slides/Lecture21-QuantumMechanics.pptx)), Code ([ipynb](code/13_QuantumMechanics/13_QuantumMechanics.ipynb))]
     - Matrix method for eigenenergies and eigenstates
     - Time-dependent Schroedinger equation
     - Variational method
-    [[pdf](slides/Lecture21-QuantumMechanics.pdf), [pptx](slides/Lecture21-QuantumMechanics.pptx), Code ([ipynb](code/13_QuantumMechanics/13_QuantumMechanics.ipynb))]
 
 15. Fourier transform [Lecture ([pdf](slides/Lecture22-Fourier.pdf)), Code ([ipynb](code/14_FFT/14_FFT.ipynb))]
     - Discrete Fourier Transform
