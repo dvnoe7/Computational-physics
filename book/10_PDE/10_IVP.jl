@@ -4,8 +4,20 @@
 using Markdown
 using InteractiveUtils
 
-# ╔═╡ d3323fa3-8f6e-4b79-82cd-c9d53c8de4cf
-using Plots 
+# This Pluto notebook uses @bind for interactivity. When running this notebook outside of Pluto, the following 'mock version' of @bind gives bound variables a default value (instead of an error).
+macro bind(def, element)
+    #! format: off
+    return quote
+        local iv = try Base.loaded_modules[Base.PkgId(Base.UUID("6e696c72-6542-2067-7265-42206c756150"), "AbstractPlutoDingetjes")].Bonds.initial_value catch; b -> missing; end
+        local el = $(esc(element))
+        global $(esc(def)) = Core.applicable(Base.get, el) ? Base.get(el) : iv(el)
+        el
+    end
+    #! format: on
+end
+
+# ╔═╡ 2708e1af-b1a7-42e1-af3e-49bb13b4ec71
+using Plots,PlutoUI
 
 # ╔═╡ 85917525-dbb1-4825-83b0-7bd0048aa4f9
 md"""
@@ -47,7 +59,7 @@ is a dimensionless parameter.
 begin
 	Tleft = 50
 	Tright = 0
-	Tmidle = 20
+	Tmiddle = 20
 end;
 
 # ╔═╡ 8ffe66b0-a29d-4b64-bcd6-917509d90618
@@ -64,8 +76,29 @@ function heat_FTCS_iteration(u,r)
 	return u_new
 end
 
+# ╔═╡ d7ddbd84-3a21-49b5-8944-fcdcfbd58a6e
+@bind t_end Slider(10:50)
+
+# ╔═╡ b008a361-3ae1-4f2b-84fc-3ad090c5b0f2
+begin
+	# Constants
+	L = 0.01      # Thickness of steel in meters
+	D = 4.25e-6   # Thermal diffusivity
+	N = 100       # Number of divisions in grid
+	Δx = L/N       # Grid spacing
+	Δt = 1e-4      # Time-step (in s)
+	u = zeros(N+1)
+	u[1] = Tleft
+	u[N+1] = Tright
+	u[2:end-1] .= Tmiddle
+	r = 5
+	D = 1
+	t = 0:Δt:t_end
+	
+end
+
 # ╔═╡ 5a6b1eff-95f9-48f4-b051-d913865f2ed5
-function heat_FTCS_solve(u₀,t,N,D)
+function heat_FTCS_solve(u₀,t,a,D)
 	u = copy(u₀)
 	Δt = t[2]-t[1]
 	Δx = 1/N+1
@@ -76,28 +109,23 @@ function heat_FTCS_solve(u₀,t,N,D)
 	return u
 end
 
-# ╔═╡ b008a361-3ae1-4f2b-84fc-3ad090c5b0f2
-begin
-	N = 1000
-	u = zeros(N+1)
-	u[1] = Tleft
-	u[N+1] = Tright
-	r = 5
-	D = 1
-	t = 0:0.01:10
-	
-end
+# ╔═╡ 174fbe6a-2a2e-4461-82e4-ea4e74ac4a30
+u_sol = heat_FTCS_solve(u,t,N,D)
 
 # ╔═╡ 179a41da-a039-4c23-b7c9-afe738920561
-heat_FTCS_solve(u,t,N,D)
+begin
+	plot(u_sol)
+end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
 PLUTO_PROJECT_TOML_CONTENTS = """
 [deps]
 Plots = "91a5bcdd-55d7-5caf-9e0b-520d859cae80"
+PlutoUI = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
 
 [compat]
 Plots = "~1.41.1"
+PlutoUI = "~0.7.75"
 """
 
 # ╔═╡ 00000000-0000-0000-0000-000000000002
@@ -106,7 +134,13 @@ PLUTO_MANIFEST_TOML_CONTENTS = """
 
 julia_version = "1.12.1"
 manifest_format = "2.0"
-project_hash = "041a7a8e72731407ec7f03feb5d71f73c831beb4"
+project_hash = "69a15f9532930114d3cd35c580a475da7b96b2a8"
+
+[[deps.AbstractPlutoDingetjes]]
+deps = ["Pkg"]
+git-tree-sha1 = "6e1d2a35f2f90a4bc7c2ed98079b2ba09c35b83a"
+uuid = "6e696c72-6542-2067-7265-42206c756150"
+version = "1.3.2"
 
 [[deps.AliasTables]]
 deps = ["PtrArrays", "Random"]
@@ -359,6 +393,24 @@ git-tree-sha1 = "f923f9a774fcf3f5cb761bfa43aeadd689714813"
 uuid = "2e76f6c2-a576-52d4-95c1-20adfe4de566"
 version = "8.5.1+0"
 
+[[deps.Hyperscript]]
+deps = ["Test"]
+git-tree-sha1 = "179267cfa5e712760cd43dcae385d7ea90cc25a4"
+uuid = "47d2ed2b-36de-50cf-bf87-49c2cf4b8b91"
+version = "0.0.5"
+
+[[deps.HypertextLiteral]]
+deps = ["Tricks"]
+git-tree-sha1 = "7134810b1afce04bbc1045ca1985fbe81ce17653"
+uuid = "ac1192a8-f4b3-4bfe-ba22-af5b92cd3ab2"
+version = "0.9.5"
+
+[[deps.IOCapture]]
+deps = ["Logging", "Random"]
+git-tree-sha1 = "0ee181ec08df7d7c911901ea38baf16f755114dc"
+uuid = "b5f81e59-6552-4d32-b1f0-c071b021bf89"
+version = "1.0.0"
+
 [[deps.InteractiveUtils]]
 deps = ["Markdown"]
 uuid = "b77e0a4c-d291-57a0-90e8-8db25a27a240"
@@ -547,6 +599,11 @@ git-tree-sha1 = "f00544d95982ea270145636c181ceda21c4e2575"
 uuid = "e6f89c97-d47a-5376-807f-9c37f3926c36"
 version = "1.2.0"
 
+[[deps.MIMEs]]
+git-tree-sha1 = "c64d943587f7187e751162b3b84445bbbd79f691"
+uuid = "6c6e2e6c-3030-632d-7369-2d6c69616d65"
+version = "1.1.0"
+
 [[deps.MacroTools]]
 git-tree-sha1 = "1e0228a030642014fe5cfe68c2c0a818f9e3f522"
 uuid = "1914dd2f-81c6-5fcd-8719-6d5c9610ff09"
@@ -699,6 +756,12 @@ version = "1.41.1"
     IJulia = "7073ff75-c697-5162-941a-fcdaad2a7d2a"
     ImageInTerminal = "d8c32880-2388-543b-8c61-d9f865259254"
     Unitful = "1986cc42-f94f-5a68-af5c-568840ba703d"
+
+[[deps.PlutoUI]]
+deps = ["AbstractPlutoDingetjes", "Base64", "ColorTypes", "Dates", "Downloads", "FixedPointNumbers", "Hyperscript", "HypertextLiteral", "IOCapture", "InteractiveUtils", "JSON", "Logging", "MIMEs", "Markdown", "Random", "Reexport", "URIs", "UUIDs"]
+git-tree-sha1 = "db8a06ef983af758d285665a0398703eb5bc1d66"
+uuid = "7f904dfe-b85e-4ff6-b463-dae2292396a8"
+version = "0.7.75"
 
 [[deps.PrecompileTools]]
 deps = ["Preferences"]
@@ -901,6 +964,11 @@ version = "1.11.0"
 git-tree-sha1 = "0c45878dcfdcfa8480052b6ab162cdd138781742"
 uuid = "3bb67fe8-82b1-5028-8e26-92a6c54297fa"
 version = "0.11.3"
+
+[[deps.Tricks]]
+git-tree-sha1 = "311349fd1c93a31f783f977a71e8b062a57d4101"
+uuid = "410a4b4d-49e4-4fbc-ab6d-cb71b17b3775"
+version = "0.1.13"
 
 [[deps.URIs]]
 git-tree-sha1 = "bef26fb046d031353ef97a82e3fdb6afe7f21b1a"
@@ -1196,11 +1264,13 @@ version = "1.9.2+0"
 
 # ╔═╡ Cell order:
 # ╟─85917525-dbb1-4825-83b0-7bd0048aa4f9
+# ╠═2708e1af-b1a7-42e1-af3e-49bb13b4ec71
 # ╠═dba5e2a0-caf7-11f0-af49-21f2171b37ec
 # ╠═8ffe66b0-a29d-4b64-bcd6-917509d90618
 # ╠═5a6b1eff-95f9-48f4-b051-d913865f2ed5
 # ╠═b008a361-3ae1-4f2b-84fc-3ad090c5b0f2
+# ╠═d7ddbd84-3a21-49b5-8944-fcdcfbd58a6e
+# ╠═174fbe6a-2a2e-4461-82e4-ea4e74ac4a30
 # ╠═179a41da-a039-4c23-b7c9-afe738920561
-# ╠═d3323fa3-8f6e-4b79-82cd-c9d53c8de4cf
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
