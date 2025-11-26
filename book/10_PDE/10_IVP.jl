@@ -76,8 +76,20 @@ function heat_FTCS_iteration(u,r)
 	return u_new
 end
 
-# ╔═╡ d7ddbd84-3a21-49b5-8944-fcdcfbd58a6e
-@bind t_end Slider(10:50)
+# ╔═╡ 5a6b1eff-95f9-48f4-b051-d913865f2ed5
+function heat_FTCS_solve(u₀,t,N,L,D)
+	Δt = t[2]-t[1]
+	Δx = L/N
+	r = D*Δt/Δx^2
+	u_sol = zeros(length(t),(length(u₀)))
+	u = copy(u₀)
+	u_sol[1,:] = u
+	for i in 1:length(t)-1
+		u = heat_FTCS_iteration(u,r)
+		u_sol[i+1,:] = u
+	end
+	return u_sol
+end
 
 # ╔═╡ b008a361-3ae1-4f2b-84fc-3ad090c5b0f2
 begin
@@ -91,30 +103,23 @@ begin
 	u[1] = Tleft
 	u[N+1] = Tright
 	u[2:end-1] .= Tmiddle
-	r = 5
-	D = 1
+	r = D*Δt/Δx^2
+	t_end = 10
 	t = 0:Δt:t_end
 	
-end
 
-# ╔═╡ 5a6b1eff-95f9-48f4-b051-d913865f2ed5
-function heat_FTCS_solve(u₀,t,a,D)
-	u = copy(u₀)
-	Δt = t[2]-t[1]
-	Δx = 1/N+1
-	r = D*Δt/Δx^2
-	for _ in 1:length(t)
-		u = heat_FTCS_iteration(u,r)
-	end
-	return u
+
 end
 
 # ╔═╡ 174fbe6a-2a2e-4461-82e4-ea4e74ac4a30
-u_sol = heat_FTCS_solve(u,t,N,D)
+u_sol = heat_FTCS_solve(u,t,N,L,D);
+
+# ╔═╡ d7ddbd84-3a21-49b5-8944-fcdcfbd58a6e
+@bind i Slider(1:length(t))
 
 # ╔═╡ 179a41da-a039-4c23-b7c9-afe738920561
 begin
-	plot(u_sol)
+	plot(u_sol[i,:])
 end
 
 # ╔═╡ 00000000-0000-0000-0000-000000000001
@@ -1269,8 +1274,8 @@ version = "1.9.2+0"
 # ╠═8ffe66b0-a29d-4b64-bcd6-917509d90618
 # ╠═5a6b1eff-95f9-48f4-b051-d913865f2ed5
 # ╠═b008a361-3ae1-4f2b-84fc-3ad090c5b0f2
-# ╠═d7ddbd84-3a21-49b5-8944-fcdcfbd58a6e
 # ╠═174fbe6a-2a2e-4461-82e4-ea4e74ac4a30
+# ╠═d7ddbd84-3a21-49b5-8944-fcdcfbd58a6e
 # ╠═179a41da-a039-4c23-b7c9-afe738920561
 # ╟─00000000-0000-0000-0000-000000000001
 # ╟─00000000-0000-0000-0000-000000000002
